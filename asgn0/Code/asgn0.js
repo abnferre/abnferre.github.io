@@ -87,8 +87,10 @@ function handleDrawOperationEvent(){
             break;
         case "AngleBetween":
             angleBetween(v1,v2);
+            break;
         case "Area":
             areaTriangle(v1,v2);
+            break;
     }
     
 }
