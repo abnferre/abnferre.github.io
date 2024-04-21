@@ -4,13 +4,13 @@ function main() {
 
 	const canvas = document.querySelector( '#c' );
 	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
-
+	renderer.setSize(704, 352);
 	const fov = 75;
 	const aspect = 2; // the canvas default
 	const near = 0.1;
 	const far = 5;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.z = 2;
+	camera.position.z = 4;
 
 	const scene = new THREE.Scene();
 
@@ -29,23 +29,52 @@ function main() {
 	const boxDepth = 1;
 	const geometry = new THREE.BoxGeometry( boxWidth, boxHeight, boxDepth );
 
-	function makeInstance( geometry, color, x ) {
-
-		const material = new THREE.MeshPhongMaterial( { color } );
-
-		const cube = new THREE.Mesh( geometry, material );
-		scene.add( cube );
-
-		cube.position.x = x;
+	function makeInstance( geometry, url, x ) {
+		
+		const loader = new THREE.TextureLoader();
+		if (url === 'custom'){
+			const materials = [
+				new THREE.MeshBasicMaterial({map: loadColorTexture('/asgn5A/Code/red.jpg')}),
+				new THREE.MeshBasicMaterial({map: loadColorTexture('/asgn5A/Code/redamongus.webp')}),
+				new THREE.MeshBasicMaterial({map: loadColorTexture('/asgn5A/Code/cyan.jpg')}),
+				new THREE.MeshBasicMaterial({map: loadColorTexture('/asgn5A/Code/yellow.jpg')}),
+				new THREE.MeshBasicMaterial({map: loadColorTexture('/asgn5A/Code/light blue.jpg')}),
+				new THREE.MeshBasicMaterial({map: loadColorTexture('/asgn5A/Code/orange.jpg')}),
+			
+			  ];
+			  const cube = new THREE.Mesh(geometry, materials);
+ 
+			function loadColorTexture( path ) {
+			const texture = loader.load( path );
+  			texture.colorSpace = THREE.SRGBColorSpace;
+  			return texture;
+			}
+			scene.add( cube );
+			cube.position.x = x;
 
 		return cube;
+		}
+		else{
+			const texture = loader.load( url );
+			texture.colorSpace = THREE.SRGBColorSpace;
+			const material = new THREE.MeshPhongMaterial( { map: texture } );
+			const cube = new THREE.Mesh( geometry, material );
+			scene.add( cube );
+			cube.position.x = x;
+
+		return cube;
+		}
+		
+		
+
+		
 
 	}
 
 	const cubes = [
-		makeInstance( geometry, 0x44aa88, 0 ),
-		makeInstance( geometry, 0x8844aa, - 2 ),
-		makeInstance( geometry, 0xaa8844, 2 ),
+		makeInstance( geometry, '/asgn5A/Code/dirt texture.jpg', 0 ),
+		makeInstance( geometry, '/asgn5A/Code/wood.jpg', - 4 ),
+		makeInstance( geometry, 'custom', 2 ),
 	];
 
 	function render( time ) {
