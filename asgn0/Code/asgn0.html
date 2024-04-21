@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html land = "en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Draw a blue rectangle (canvas version)</title>
+    </head>
+    <!--tells the browser that when it loads the separate JavaScript code it should use the function main()
+    as the entry point for the Javascript proram-->
+     <p>Ari Ferreros</p>
+    <p>abnferre@ucsc.edu</p>
+    <body onload= "main()">
+        
+        <!--canvas element that defines drawing area as 400 x 400 px-->
+        <!--canvas is giver identifier using id attribute-->
+    <canvas id="example" width= "400" height = "400"> 
+        Please use a browser that supports "canvas"
+    </canvas> 
+    <!--tells browser to import the JavaScript file DrawRectangle.js in which the
+    function main() is defined-->
+    <script src = "../lib/cuon-matrix-cse160.js"></script>
+    <script src = "../Code/asgn0.js"></script>
+    <br><br>
+    <label for="V1">v1:</label>
+    <label for="x">v</label>
+    <input type = "number" id="x1" name="x1" required
+        min="-999" max="999">
+    <label for="y">y</label>
+    <input type = "number" id="y1" name="y1" required
+        min="-999" max="999">
+    <br><br>
+        <label for="V2">v2:</label>
+        <label for="x">x</label>
+        <input type = "number" id="x2" name="x1" required
+            min="-999" max="999">
+        <label for="y">y</label>
+        <input type = "number" id="y2" name="y1" required
+            min="-999" max="999">
+            <br><br>
+        <input type = "button" onclick="handleDrawEvent()" value="Draw">
+        <br><br>
+
+        <label for="Operation">Operation:</label>
+
+        <select name="op" id="operation-select">
+          <option value="Add">Add</option>
+          <option value="Subtract">Subtract</option>
+          <option value="Multiply">Multiply</option>
+          <option value="Divide">Divide</option>
+          <option value="Magnitude">Magnitude</option>
+          <option value="Normalize">Normalize</option>
+          <option value="AngleBetween">Angle Between</option>
+          <option value="Area">Area</option>
+
+        </select>
+    
+    <label for = "Scalar">Scalar</label>
+    <input type = "text" id="Scalar" name = "Scalar" required
+        minlength="4" maxlength="8" size="10">
+        <br><br>
+
+    <input type = "button" onclick="handleDrawOperationEvent()" value="Draw">
+    </body>
+</html>
