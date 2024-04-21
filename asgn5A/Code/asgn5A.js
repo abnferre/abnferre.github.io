@@ -1,11 +1,10 @@
-import * as THREE from 'three';
-import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
-import {MTLLoader} from 'three/addons/loaders/MTLLoader.js';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import * as THREE from '/three';
+import {OBJLoader} from '/three/addons/loaders/OBJLoader.js';
+import {MTLLoader} from '/three/addons/loaders/MTLLoader.js';
 
 
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { OrbitControls } from '/three/addons/controls/OrbitControls.js';
+import { GUI } from '/three/addons/libs/lil-gui.module.min.js';
 
 
 function main() {
