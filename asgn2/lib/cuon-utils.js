@@ -1,94 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>BlockyAnimal</title>
-    
-  </head>
+// cuon-utils.js (c) 2012 kanda and matsuda
+/**
+ * Create a program object and make current
+ * @param gl GL context
+ * @param vshader a vertex shader program (string)
+ * @param fshader a fragment shader program (string)
+ * @return true, if the program object was created and successfully made current 
+ */
+function initShaders(gl, vshader, fshader) {
+  var program = createProgram(gl, vshader, fshader);
+  if (!program) {
+    console.log('Failed to create program');
+    return false;
+  }
 
-  <body onload="main()">
-    <p>Ari Ferreros</p>
-    <p>abnferre@ucsc.edu</p>
-    <p>Notes: added 3 animations, joint from feet to body to head</p>
-    <p>need to wait a bit or turn off then on the animation when changing speed</p>
-    <p>shift-click to cycle through animations</p>
-    <div>
-    <canvas id="webgl" width="400" height="400">
-    Please use a browser that supports "canvas"
-    </canvas>
-    
-</div>
-    <p>
-    <p id= "numdot"> XXX</p>
+  gl.useProgram(program);
+  gl.program = program;
 
-    <button type= "button" id= "poseRESET">RESET POSE</button>
-      <div>
-        <label for="angleSlide">Camera Angle X</label>
-        <input type="range" id="angleSlide" class= "slider" min="0" max="360" value="20" />
-      </div>
-      <div>
-        <div>
-          <label for="angleSlideY">Camera Angle Y</label>
-          <input type="range" id="angleSlideY" class= "slider" min="0" max="360" value="5" />
-        </div>
-        <div>
-      <div>
-          <label for="headSlide">Rotate Head</label>
-          <input type="range" id="headSlide" class= "slider" min="-30" max="15" value="0" />
-        </div>
-        <div>
-          <label for="armSlide">Rotate Left arm</label>
-          <input type="range" id="armSlide" class= "slider" min="30" max="160" value="30" />
-          
+  return true;
+}
 
-        </div>
-        <div>
-          <label for="armSlideR">Rotate Right arm</label>
-          <input type="range" id="armSlideR" class= "slider" min="30" max="160" value="30" />
-        </div>
-        <div>
-          <label for="bodySlide">Rotate Body</label>
-          <input type="range" id="bodySlide" class= "slider" min="-25" max="25" value="0" />
-        </div>
-        <!--
-        <div>
-            <label for="feetSlide">Rotate Feet</label>
-            <input type="range" id="feetSlide" class= "slider" min="-25" max="25" value="0" />
-        </div> -->
-        <h3>Animations</h3>
-          <div>
-            <label for="Animations">Wave Animation</label>
-            <button type= "button" id= "armLAnimationON">ON</button>
-            <button type= "button" id= "armLAnimationOFF">OFF</button>
-          </div>
-          <div>
-            <label for="Animations">Happy Animation</label>
-            <button type= "button" id= "happyAnimationON">ON</button>
-            <button type= "button" id= "happyAnimationOFF">OFF</button>
-            <label for="happyAnimationSpeed">Speed</label>
-            <input type="range" id="happyAnimationSpeed" class= "slider" min="1" max="30" value="5" />
-          </div>
-          <div>
-            <label for="Animations">Run Animation</label>
-            <button type= "button" id= "runAnimationON">ON</button>
-            <button type= "button" id= "runAnimationOFF">OFF</button>
-            <label for="runAnimationSpeed">Speed</label>
-            <input type="range" id="runAnimationSpeed" class= "slider" min="1" max="30" value="20" />
-          </div>
+/**
+ * Create the linked program object
+ * @param gl GL context
+ * @param vshader a vertex shader program (string)
+ * @param fshader a fragment shader program (string)
+ * @return created program object, or null if the creation has failed
+ */
+function createProgram(gl, vshader, fshader) {
+  // Create shader object
+  var vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader);
+  var fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader);
+  if (!vertexShader || !fragmentShader) {
+    return null;
+  }
 
-        </div>
-        
-      
-      
-      <script src="../lib/webgl-utils.js"></script>
-    <script src="../lib/webgl-debug.js"></script>
-    <script src="../lib/cuon-utils.js"></script>
-    <script src="../lib/cuon-matrix-cse160.js"></script>
-    <script src="Point.js"></script>
-    <script src="BlockyAnimal.js"></script>
-    <script src="Triangle.js"></script>
-    <script src="Cube.js"></script>
-    <script src="Circle.js"></script>
-   
-  </body>
-</html>
+  // Create a program object
+  var program = gl.createProgram();
+  if (!program) {
+    return null;
+  }
+
+  // Attach the shader objects
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+
+  // Link the program object
+  gl.linkProgram(program);
+
+  // Check the result of linking
+  var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+  if (!linked) {
+    var error = gl.getProgramInfoLog(program);
+    console.log('Failed to link program: ' + error);
+    gl.deleteProgram(program);
+    gl.deleteShader(fragmentShader);
+    gl.deleteShader(vertexShader);
+    return null;
+  }
+  return program;
+}
+
+/**
+ * Create a shader object
+ * @param gl GL context
+ * @param type the type of the shader object to be created
+ * @param source shader program (string)
+ * @return created shader object, or null if the creation has failed.
+ */
+function loadShader(gl, type, source) {
+  // Create shader object
+  var shader = gl.createShader(type);
+  if (shader == null) {
+    console.log('unable to create shader');
+    return null;
+  }
+
+  // Set the shader program
+  gl.shaderSource(shader, source);
+
+  // Compile the shader
+  gl.compileShader(shader);
+
+  // Check the result of compilation
+  var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  if (!compiled) {
+    var error = gl.getShaderInfoLog(shader);
+    console.log('Failed to compile shader: ' + error);
+    gl.deleteShader(shader);
+    return null;
+  }
+
+  return shader;
+}
+
+/** 
+ * Initialize and get the rendering for WebGL
+ * @param canvas <cavnas> element
+ * @param opt_debug flag to initialize the context for debugging
+ * @return the rendering context for WebGL
+ */
+function getWebGLContext(canvas, opt_debug) {
+  // Get the rendering context for WebGL
+  var gl = WebGLUtils.setupWebGL(canvas);
+  if (!gl) return null;
+
+  // if opt_debug is explicitly false, create the context for debugging
+  if (arguments.length < 2 || opt_debug) {
+    gl = WebGLDebugUtils.makeDebugContext(gl);
+  }
+
+  return gl;
+}
